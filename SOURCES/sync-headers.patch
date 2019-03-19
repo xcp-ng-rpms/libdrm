@@ -1,0 +1,92 @@
+--- libdrm-2.4.60.orig/include/drm/i915_drm.h	2016-03-30 14:03:16.940545591 +0100
++++ libdrm-2.4.60.new/include/drm/i915_drm.h	2016-03-30 14:09:42.490527968 +0100
+@@ -228,6 +228,9 @@
+ #define DRM_I915_REG_READ		0x31
+ #define DRM_I915_GET_RESET_STATS	0x32
+ #define DRM_I915_GEM_USERPTR		0x33
++#define DRM_I915_GEM_CONTEXT_GETPARAM	0x34
++#define DRM_I915_GEM_CONTEXT_SETPARAM	0x35
++#define DRM_I915_GEM_VGTBUFFER          0x36
+ 
+ #define DRM_IOCTL_I915_INIT		DRM_IOW( DRM_COMMAND_BASE + DRM_I915_INIT, drm_i915_init_t)
+ #define DRM_IOCTL_I915_FLUSH		DRM_IO ( DRM_COMMAND_BASE + DRM_I915_FLUSH)
+@@ -279,6 +282,9 @@
+ #define DRM_IOCTL_I915_REG_READ			DRM_IOWR (DRM_COMMAND_BASE + DRM_I915_REG_READ, struct drm_i915_reg_read)
+ #define DRM_IOCTL_I915_GET_RESET_STATS		DRM_IOWR (DRM_COMMAND_BASE + DRM_I915_GET_RESET_STATS, struct drm_i915_reset_stats)
+ #define DRM_IOCTL_I915_GEM_USERPTR		DRM_IOWR(DRM_COMMAND_BASE + DRM_I915_GEM_USERPTR,  struct drm_i915_gem_userptr)
++#define DRM_IOCTL_I915_GEM_CONTEXT_GETPARAM	DRM_IOWR (DRM_COMMAND_BASE + DRM_I915_GEM_CONTEXT_GETPARAM, struct drm_i915_gem_context_param)
++#define DRM_IOCTL_I915_GEM_CONTEXT_SETPARAM	DRM_IOWR (DRM_COMMAND_BASE + DRM_I915_GEM_CONTEXT_SETPARAM, struct drm_i915_gem_context_param)
++#define DRM_IOCTL_I915_GEM_VGTBUFFER		DRM_IOWR(DRM_COMMAND_BASE + DRM_I915_GEM_VGTBUFFER, struct drm_i915_gem_vgtbuffer)
+ 
+ /* Allow drivers to submit batchbuffers directly to hardware, relying
+  * on the security mechanisms provided by hardware.
+@@ -346,10 +352,16 @@
+ #define I915_PARAM_CMD_PARSER_VERSION	 28
+ #define I915_PARAM_SUBSLICE_TOTAL	 33
+ #define I915_PARAM_EU_TOTAL		 34
++#define I915_PARAM_HAS_GPU_RESET	 35
++#define I915_PARAM_HAS_RESOURCE_STREAMER 36
+ 
+ typedef struct drm_i915_getparam {
+-	int param;
+-	int *value;
++	__s32 param;
++	/*
++	 * WARNING: Using pointers instead of fixed-size u64 means we need to write
++	 * compat32 code. Don't repeat this mistake.
++	 */
++	int  *value;
+ } drm_i915_getparam_t;
+ 
+ /* Ioctl to set kernel params:
+@@ -1134,4 +1146,50 @@
+ 	__u32 handle;
+ };
+ 
++struct drm_i915_gem_context_param {
++	__u32 ctx_id;
++	__u32 size;
++	__u64 param;
++#define I915_CONTEXT_PARAM_BAN_PERIOD 0x1
++#define I915_CONTEXT_PARAM_NO_ZEROMAP 0x2
++	__u64 value;
++};
++
++struct drm_i915_gem_vgtbuffer {
++        __u32 vmid;
++	__u32 plane_id;
++#define I915_VGT_PLANE_PRIMARY 1
++#define I915_VGT_PLANE_SPRITE 2
++#define I915_VGT_PLANE_CURSOR 3
++	__u32 pipe_id;
++	__u32 phys_pipe_id;
++	__u8  enabled;
++	__u8  tiled;
++	__u32 bpp;
++	__u32 hw_format;
++	__u32 drm_format;
++	__u32 start;
++	__u32 x_pos;
++	__u32 y_pos;
++	__u32 x_offset;
++	__u32 y_offset;
++	__u32 size;
++	__u32 width;
++	__u32 height;
++	__u32 stride;
++	__u64 user_ptr;
++	__u32 user_size;
++	__u32 flags;
++#define I915_VGTBUFFER_READ_ONLY (1<<0)
++#define I915_VGTBUFFER_QUERY_ONLY (1<<1)
++#define I915_VGTBUFFER_UNSYNCHRONIZED 0x80000000
++        __u32 hash;
++	/**
++	 * Returned handle for the object.
++	 *
++	 * Object handles are nonzero.
++	 */
++	__u32 handle;
++};
++
+ #endif /* _I915_DRM_H_ */

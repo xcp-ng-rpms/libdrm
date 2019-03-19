@@ -1,0 +1,45 @@
+From 812e8fe6ce46d733c30207ee26c788c61f546294 Mon Sep 17 00:00:00 2001
+From: Ben Skeggs <bskeggs@redhat.com>
+Date: Wed, 6 May 2015 14:34:22 +1000
+Subject: [PATCH] nouveau: restore check that avoids multiple user bos per
+ kernel bo
+
+Lost in 5ea6f1c32628887c9df0c53bc8c199eb12633fec, triggering fdo#89842.
+
+Unlike the PRIME fd->handle interfaces, the GEM_OPEN interface doesn't
+do anything at the kernel level to prevent this situation occuring,
+and we end up with multiple GEM handles for a single kernel buffer.
+
+Signed-off-by: Ben Skeggs <bskeggs@redhat.com>
+---
+ nouveau/nouveau.c | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
+
+diff --git a/nouveau/nouveau.c b/nouveau/nouveau.c
+index 0071249..7393474 100644
+--- a/nouveau/nouveau.c
++++ b/nouveau/nouveau.c
+@@ -480,10 +480,20 @@ nouveau_bo_name_ref(struct nouveau_device *dev, uint32_t name,
+ 		    struct nouveau_bo **pbo)
+ {
+ 	struct nouveau_device_priv *nvdev = nouveau_device(dev);
++	struct nouveau_bo_priv *nvbo;
+ 	struct drm_gem_open req = { .name = name };
+ 	int ret;
+ 
+ 	pthread_mutex_lock(&nvdev->lock);
++	DRMLISTFOREACHENTRY(nvbo, &nvdev->bo_list, head) {
++		if (nvbo->name == name) {
++			ret = nouveau_bo_wrap_locked(dev, nvbo->base.handle,
++						     pbo, name);
++			pthread_mutex_unlock(&nvdev->lock);
++			return ret;
++		}
++	}
++
+ 	ret = drmIoctl(dev->fd, DRM_IOCTL_GEM_OPEN, &req);
+ 	if (ret == 0) {
+ 		ret = nouveau_bo_wrap_locked(dev, req.handle, pbo, name);
+-- 
+1.9.3
+
