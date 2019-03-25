@@ -3,7 +3,7 @@
 Summary: Direct Rendering Manager runtime library
 Name: libdrm
 Version: 2.4.60
-Release: 3.el7.xs9
+Release: 3.1%{dist}
 License: MIT
 Group: System Environment/Libraries
 URL: http://dri.sourceforge.net
