@@ -1,10 +1,10 @@
-diff -up libdrm-2.4.25/tests/Makefile.am.jx libdrm-2.4.25/tests/Makefile.am
---- libdrm-2.4.25/tests/Makefile.am.jx	2011-03-21 09:39:24.000000000 -0400
-+++ libdrm-2.4.25/tests/Makefile.am	2011-04-18 11:40:17.000000000 -0400
-@@ -58,3 +58,6 @@ endif
- check_PROGRAMS += $(TESTS)
- 
- endif
+diff -up libdrm-2.4.82/tests/Makefile.am.check libdrm-2.4.82/tests/Makefile.am
+--- libdrm-2.4.82/tests/Makefile.am.check	2017-08-10 09:44:12.380441220 +1000
++++ libdrm-2.4.82/tests/Makefile.am	2017-08-10 09:45:13.349056689 +1000
+@@ -45,3 +45,6 @@ TESTS = \
+ check_PROGRAMS = \
+ 	$(TESTS) \
+ 	drmdevice
 +
 +check-programs:
 +	@echo $(check_PROGRAMS)

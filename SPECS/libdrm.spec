@@ -2,13 +2,32 @@
 
 Summary: Direct Rendering Manager runtime library
 Name: libdrm
-Version: 2.4.60
-Release: 3.1%{dist}
+Version: 2.4.83
+Release: 2%{?dist}.xs1
 License: MIT
 Group: System Environment/Libraries
 URL: http://dri.sourceforge.net
-Source0: https://repo.citrite.net/xs-local-contrib/libdrm/%{name}-%{version}.tar.bz2
-Source1: make-git-snapshot.sh
+# %if 0%{?gitdate}
+# Source0: %{name}-%{gitdate}.tar.bz2
+# %else
+# Source0: http://dri.freedesktop.org/libdrm/%{name}-%{version}.tar.bz2
+# %endif
+
+Source0: https://code.citrite.net/rest/archive/latest/projects/XSU/repos/libdrm/archive?at=libdrm-2.4.83&format=tar.gz&prefix=libdrm-2.4.83#/libdrm-2.4.83.tar.gz
+Source1: SOURCES/libdrm/make-git-snapshot.sh
+Source2: SOURCES/libdrm/91-drm-modeset.rules
+Patch1: SOURCES/libdrm/0001-intel-Change-a-KBL-pci-id-to-GT2-from-GT1.5.patch
+Patch3: SOURCES/libdrm/libdrm-make-dri-perms-okay.patch
+Patch4: SOURCES/libdrm/libdrm-2.4.0-no-bc.patch
+Patch5: SOURCES/libdrm/libdrm-2.4.25-check-programs.patch
+Patch10: SOURCES/libdrm/0002-intel-Add-more-Coffeelake-PCI-IDs.patch
+
+Patch11: sync-headers.patch
+
+Provides: gitsha(https://code.citrite.net/rest/archive/latest/projects/XSU/repos/libdrm.centos/archive?at=imports/c7/libdrm-2.4.83-2.el7&format=tar.gz#/libdrm-2.4.83.centos.tar.gz) = 73aa73a500bc1eb94fa12e417800f6ac43f8a091
+Provides: gitsha(https://code.citrite.net/rest/archive/latest/projects/XS/repos/libdrm.pg/archive?at=v1.1.0&format=tar.gz#/libdrm-v1.1.0.pg.tar.gz) = 4b20b492882dbc3d1887afbe771a54a65a36dca6
+Provides: gitsha(https://code.citrite.net/rest/archive/latest/projects/XSU/repos/libdrm/archive?at=libdrm-2.4.83&format=tar.gz&prefix=libdrm-2.4.83#/libdrm-2.4.83.tar.gz) = f19dbb79fe54994ecd505ac67ad15d19f591933a
+
 
 Requires: udev
 
@@ -26,40 +45,37 @@ BuildRequires: libxslt docbook-style-xsl
 %ifarch %{ix86} x86_64 ppc ppc64 ppc64le s390x armv7hl aarch64
 BuildRequires: valgrind-devel
 %endif
+BuildRequires: xorg-x11-util-macros
 
-Source2: 91-drm-modeset.rules
 
+# backport from upstream master seems like it should be in here.
 # hardcode the 666 instead of 660 for device nodes
-Patch3: libdrm-make-dri-perms-okay.patch
 # remove backwards compat not needed on Fedora
-Patch4: libdrm-2.4.0-no-bc.patch
 # make rule to print the list of test programs
-Patch5: libdrm-2.4.25-check-programs.patch
 
-# backport nouveau fix
-Patch10: 0001-nouveau-restore-check-that-avoids-multiple-user-bos-.patch
-
-Patch2000: sync-headers.patch
-Patch2001: 0001-intel-Add-the-Broxton-PCI-IDs.patch
-Patch2002: 0001-intel-Add-SKL-GT4-PCI-IDs.patch
-Patch2003: 0001-intel-Cleanup-SKL-PCI-ID-definitions.patch
-Patch2004: 0001-intel-kbl-Add-Kabylake-PCI-ids.patch
-
+#Backport some intel pci ids.
 
 %description
 Direct Rendering Manager runtime library
 
 %package devel
+Provides: gitsha(https://code.citrite.net/rest/archive/latest/projects/XSU/repos/libdrm.centos/archive?at=imports/c7/libdrm-2.4.83-2.el7&format=tar.gz#/libdrm-2.4.83.centos.tar.gz) = 73aa73a500bc1eb94fa12e417800f6ac43f8a091
+Provides: gitsha(https://code.citrite.net/rest/archive/latest/projects/XS/repos/libdrm.pg/archive?at=v1.1.0&format=tar.gz#/libdrm-v1.1.0.pg.tar.gz) = 4b20b492882dbc3d1887afbe771a54a65a36dca6
+Provides: gitsha(https://code.citrite.net/rest/archive/latest/projects/XSU/repos/libdrm/archive?at=libdrm-2.4.83&format=tar.gz&prefix=libdrm-2.4.83#/libdrm-2.4.83.tar.gz) = f19dbb79fe54994ecd505ac67ad15d19f591933a
 Summary: Direct Rendering Manager development package
 Group: Development/Libraries
 Requires: %{name} = %{version}-%{release}
 Requires: kernel-headers >= 2.6.27-0.144.rc0.git2.fc10
 Requires: pkgconfig
+Provides: xenserver-%{name}-devel = %{version}
 
 %description devel
 Direct Rendering Manager development package
 
 %package -n drm-utils
+Provides: gitsha(https://code.citrite.net/rest/archive/latest/projects/XSU/repos/libdrm.centos/archive?at=imports/c7/libdrm-2.4.83-2.el7&format=tar.gz#/libdrm-2.4.83.centos.tar.gz) = 73aa73a500bc1eb94fa12e417800f6ac43f8a091
+Provides: gitsha(https://code.citrite.net/rest/archive/latest/projects/XS/repos/libdrm.pg/archive?at=v1.1.0&format=tar.gz#/libdrm-v1.1.0.pg.tar.gz) = 4b20b492882dbc3d1887afbe771a54a65a36dca6
+Provides: gitsha(https://code.citrite.net/rest/archive/latest/projects/XSU/repos/libdrm/archive?at=libdrm-2.4.83&format=tar.gz&prefix=libdrm-2.4.83#/libdrm-2.4.83.tar.gz) = f19dbb79fe54994ecd505ac67ad15d19f591933a
 Summary: Direct Rendering Manager utilities
 Group: Development/Tools
 Requires: libdrm = %{version}-%{release}
@@ -68,18 +84,15 @@ Requires: libdrm = %{version}-%{release}
 Utility programs for the kernel DRM interface.  Will void your warranty.
 
 %prep
-%setup -q %{?gitdate:-n %{name}-%{gitdate}}
-%patch3 -p1 -b .forceperms
-%patch4 -p1 -b .no-bc
-%patch5 -p1 -b .check
-%patch10 -p1 -b .nouveau
+%autosetup -p1
 
-%patch2000 -p1
-%patch2001 -p1
-%patch2002 -p1
-%patch2003 -p1
-%patch2004 -p1
+# %setup -q %{?gitdate:-n %{name}-%{gitdate}}
+# %patch1 -p1 -b .intelfix
+# %patch3 -p1 -b .forceperms
+# %patch4 -p1 -b .no-bc
+# %patch5 -p1 -b .check
 
+# %patch10 -p1 -b .cfl
 
 %build
 autoreconf -v --install || exit 1
@@ -101,7 +114,7 @@ make install DESTDIR=$RPM_BUILD_ROOT
 pushd tests
 mkdir -p $RPM_BUILD_ROOT%{_bindir}
 for foo in $(make check-programs) ; do
- install -m 0755 .libs/$foo $RPM_BUILD_ROOT%{_bindir}
+libtool --mode=install install -m 0755 $foo %{buildroot}%{_bindir}
 done
 popd
 # SUBDIRS=libdrm
@@ -139,36 +152,38 @@ done
 %{_libdir}/libdrm_freedreno.so.1
 %{_libdir}/libdrm_freedreno.so.1.0.0
 %endif
+%{_libdir}/libdrm_amdgpu.so.1
+%{_libdir}/libdrm_amdgpu.so.1.0.0
 %{_libdir}/libdrm_radeon.so.1
 %{_libdir}/libdrm_radeon.so.1.0.1
 %{_libdir}/libdrm_nouveau.so.2
 %{_libdir}/libdrm_nouveau.so.2.0.0
 %{_libdir}/libkms.so.1
 %{_libdir}/libkms.so.1.0.0
+%{_datadir}/libdrm/amdgpu.ids
 /usr/lib/udev/rules.d/91-drm-modeset.rules
 
 %files -n drm-utils
 %defattr(-,root,root,-)
-%{_bindir}/dristat
-%{_bindir}/drmstat
-%{_bindir}/getclient
-%{_bindir}/getstats
-%{_bindir}/getversion
-%{_bindir}/name_from_fd
-%{_bindir}/openclose
-%{_bindir}/setversion
-%{_bindir}/updatedraw
+%{_bindir}/drmdevice
 %{_bindir}/modetest
 %{_bindir}/modeprint
 %{_bindir}/vbltest
 %{_bindir}/kmstest
+%{_bindir}/kms-steal-crtc
+%{_bindir}/kms-universal-planes
 %exclude %{_bindir}/exynos*
+%exclude %{_bindir}/drmsl
+%exclude %{_bindir}/hash
+%exclude %{_bindir}/proptest
+%exclude %{_bindir}/random
 
 %files devel
 %defattr(-,root,root,-)
 # FIXME should be in drm/ too
 %{_includedir}/xf86drm.h
 %{_includedir}/xf86drmMode.h
+%{_includedir}/libsync.h
 %dir %{_includedir}/libdrm
 %{_includedir}/libdrm/drm.h
 %{_includedir}/libdrm/drm_fourcc.h
@@ -188,7 +203,10 @@ done
 %endif
 %ifarch %{arm} aarch64
 %{_includedir}/freedreno/
+%{_includedir}/libdrm/vc4_packet.h
+%{_includedir}/libdrm/vc4_qpu_defines.h
 %endif
+%{_includedir}/libdrm/amdgpu.h
 %{_includedir}/libdrm/radeon_bo.h
 %{_includedir}/libdrm/radeon_bo_gem.h
 %{_includedir}/libdrm/radeon_bo_int.h
@@ -197,8 +215,9 @@ done
 %{_includedir}/libdrm/radeon_cs_int.h
 %{_includedir}/libdrm/radeon_surface.h
 %{_includedir}/libdrm/r600_pci_ids.h
-%{_includedir}/libdrm/nouveau.h
 %{_includedir}/libdrm/*_drm.h
+%{_includedir}/libdrm/nouveau/*.h
+%{_includedir}/libdrm/nouveau/nvif/*.h
 %{_includedir}/libkms
 %{_libdir}/libdrm.so
 %ifarch %{ix86} x86_64 ia64
@@ -213,6 +232,7 @@ done
 %{_libdir}/libdrm_freedreno.so
 %endif
 %{_libdir}/libdrm_radeon.so
+%{_libdir}/libdrm_amdgpu.so
 %{_libdir}/libdrm_nouveau.so
 %{_libdir}/libkms.so
 %{_libdir}/pkgconfig/libdrm.pc
@@ -226,14 +246,34 @@ done
 %endif
 %ifarch %{arm} aarch64
 %{_libdir}/pkgconfig/libdrm_freedreno.pc
+%{_libdir}/pkgconfig/libdrm_vc4.pc
 %endif
 %{_libdir}/pkgconfig/libdrm_radeon.pc
+%{_libdir}/pkgconfig/libdrm_amdgpu.pc
 %{_libdir}/pkgconfig/libdrm_nouveau.pc
 %{_libdir}/pkgconfig/libkms.pc
 %{_mandir}/man3/drm*.3*
 %{_mandir}/man7/drm*.7*
 
 %changelog
+* Fri Jan 12 2018 Dave Airlie <airlied@redhat.com> - 2.4.83-2
+- Add some Coffeelake PCI IDs
+
+* Fri Oct 06 2017 Dave Airlie <airlied@redhat.com> - 2.4.83-1
+- libdrm 2.4.83
+
+* Wed Jan 18 2017 Dave Airlie <airlied@redhat.com> - 2.4.74-1
+- libdrm 2.4.74
+
+* Tue Aug 09 2016 Rob Clark <rclark@redhat.com> - 2.4.67-3
+- kbl pci ids.
+
+* Tue Jun 14 2016 Dave Airlie <airlied@redhat.com> - 2.4.67-2
+- add missing intel pci ids.
+
+* Fri Feb 19 2016 Dave Airlie <airlied@redhat.com> 2.4.67-1
+- libdrm 2.4.67
+
 * Fri May 22 2015 Dave Airlie <airlied@redhat.com> 2.4.60-3
 - backport nouveau fix from 2.4.61
 
@@ -330,7 +370,7 @@ done
 
 * Thu Jan 17 2013 Adam Jackson <ajax@redhat.com> 2.4.41-1
 - libdrm 2.4.41 plus git.  Done as a git snapshot instead of the released
-  2.4.41 since the release tarball is missing man/ entirely.
+  2.4.41 since the release tarball is missing man/ entirely. 
 - Pre-F16 changelog trim
 
 * Wed Jan 09 2013 Ben Skeggs <bskeggs@redhat.com> 2.4.40-2
