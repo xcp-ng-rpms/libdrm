@@ -1,33 +1,31 @@
+%global package_speccommit c6b111873f1f1f19a8e1f36c7bae8f98151bcf82
+%global usver 2.4.83
+%global xsver 4
+%global xsrel %{xsver}%{?xscount}%{?xshash}
+%global package_srccommit libdrm-2.4.83
+
 #define gitdate 20130117
 
 Summary: Direct Rendering Manager runtime library
 Name: libdrm
 Version: 2.4.83
-Release: 2%{?dist}.xs1
+Release: %{?xsrel}%{?dist}
 License: MIT
 Group: System Environment/Libraries
 URL: http://dri.sourceforge.net
-# %if 0%{?gitdate}
-# Source0: %{name}-%{gitdate}.tar.bz2
+# %if 0%%{?gitdate}
+# Source0: %%{name}-%%{gitdate}.tar.bz2
 # %else
-# Source0: http://dri.freedesktop.org/libdrm/%{name}-%{version}.tar.bz2
+# Source0: http://dri.freedesktop.org/libdrm/%%{name}-%%{version}.tar.bz2
 # %endif
-
-Source0: https://code.citrite.net/rest/archive/latest/projects/XSU/repos/libdrm/archive?at=libdrm-2.4.83&format=tar.gz&prefix=libdrm-2.4.83#/libdrm-2.4.83.tar.gz
-Source1: SOURCES/libdrm/make-git-snapshot.sh
-Source2: SOURCES/libdrm/91-drm-modeset.rules
-Patch1: SOURCES/libdrm/0001-intel-Change-a-KBL-pci-id-to-GT2-from-GT1.5.patch
-Patch3: SOURCES/libdrm/libdrm-make-dri-perms-okay.patch
-Patch4: SOURCES/libdrm/libdrm-2.4.0-no-bc.patch
-Patch5: SOURCES/libdrm/libdrm-2.4.25-check-programs.patch
-Patch10: SOURCES/libdrm/0002-intel-Add-more-Coffeelake-PCI-IDs.patch
-
-Patch11: sync-headers.patch
-
-Provides: gitsha(https://code.citrite.net/rest/archive/latest/projects/XSU/repos/libdrm.centos/archive?at=imports/c7/libdrm-2.4.83-2.el7&format=tar.gz#/libdrm-2.4.83.centos.tar.gz) = 73aa73a500bc1eb94fa12e417800f6ac43f8a091
-Provides: gitsha(https://code.citrite.net/rest/archive/latest/projects/XS/repos/libdrm.pg/archive?at=v1.1.0&format=tar.gz#/libdrm-v1.1.0.pg.tar.gz) = 4b20b492882dbc3d1887afbe771a54a65a36dca6
-Provides: gitsha(https://code.citrite.net/rest/archive/latest/projects/XSU/repos/libdrm/archive?at=libdrm-2.4.83&format=tar.gz&prefix=libdrm-2.4.83#/libdrm-2.4.83.tar.gz) = f19dbb79fe54994ecd505ac67ad15d19f591933a
-
+Source0: libdrm-2.4.83.tar.gz
+Source1: make-git-snapshot.sh
+Patch0: 0001-intel-Change-a-KBL-pci-id-to-GT2-from-GT1.5.patch
+Patch1: libdrm-make-dri-perms-okay.patch
+Patch2: libdrm-2.4.0-no-bc.patch
+Patch3: libdrm-2.4.25-check-programs.patch
+Patch4: 0002-intel-Add-more-Coffeelake-PCI-IDs.patch
+Patch5: sync-headers.patch
 
 Requires: udev
 
@@ -46,7 +44,9 @@ BuildRequires: libxslt docbook-style-xsl
 BuildRequires: valgrind-devel
 %endif
 BuildRequires: xorg-x11-util-macros
+%{?_cov_buildrequires}
 
+Source2: 91-drm-modeset.rules
 
 # backport from upstream master seems like it should be in here.
 # hardcode the 666 instead of 660 for device nodes
@@ -59,9 +59,6 @@ BuildRequires: xorg-x11-util-macros
 Direct Rendering Manager runtime library
 
 %package devel
-Provides: gitsha(https://code.citrite.net/rest/archive/latest/projects/XSU/repos/libdrm.centos/archive?at=imports/c7/libdrm-2.4.83-2.el7&format=tar.gz#/libdrm-2.4.83.centos.tar.gz) = 73aa73a500bc1eb94fa12e417800f6ac43f8a091
-Provides: gitsha(https://code.citrite.net/rest/archive/latest/projects/XS/repos/libdrm.pg/archive?at=v1.1.0&format=tar.gz#/libdrm-v1.1.0.pg.tar.gz) = 4b20b492882dbc3d1887afbe771a54a65a36dca6
-Provides: gitsha(https://code.citrite.net/rest/archive/latest/projects/XSU/repos/libdrm/archive?at=libdrm-2.4.83&format=tar.gz&prefix=libdrm-2.4.83#/libdrm-2.4.83.tar.gz) = f19dbb79fe54994ecd505ac67ad15d19f591933a
 Summary: Direct Rendering Manager development package
 Group: Development/Libraries
 Requires: %{name} = %{version}-%{release}
@@ -73,9 +70,6 @@ Provides: xenserver-%{name}-devel = %{version}
 Direct Rendering Manager development package
 
 %package -n drm-utils
-Provides: gitsha(https://code.citrite.net/rest/archive/latest/projects/XSU/repos/libdrm.centos/archive?at=imports/c7/libdrm-2.4.83-2.el7&format=tar.gz#/libdrm-2.4.83.centos.tar.gz) = 73aa73a500bc1eb94fa12e417800f6ac43f8a091
-Provides: gitsha(https://code.citrite.net/rest/archive/latest/projects/XS/repos/libdrm.pg/archive?at=v1.1.0&format=tar.gz#/libdrm-v1.1.0.pg.tar.gz) = 4b20b492882dbc3d1887afbe771a54a65a36dca6
-Provides: gitsha(https://code.citrite.net/rest/archive/latest/projects/XSU/repos/libdrm/archive?at=libdrm-2.4.83&format=tar.gz&prefix=libdrm-2.4.83#/libdrm-2.4.83.tar.gz) = f19dbb79fe54994ecd505ac67ad15d19f591933a
 Summary: Direct Rendering Manager utilities
 Group: Development/Tools
 Requires: libdrm = %{version}-%{release}
@@ -85,8 +79,9 @@ Utility programs for the kernel DRM interface.  Will void your warranty.
 
 %prep
 %autosetup -p1
+%{?_cov_prepare}
 
-# %setup -q %{?gitdate:-n %{name}-%{gitdate}}
+# %setup -q %%{?gitdate:-n %%{name}-%%{gitdate}}
 # %patch1 -p1 -b .intelfix
 # %patch3 -p1 -b .forceperms
 # %patch4 -p1 -b .no-bc
@@ -98,15 +93,15 @@ Utility programs for the kernel DRM interface.  Will void your warranty.
 autoreconf -v --install || exit 1
 %configure \
 %ifarch %{arm}
-	--enable-exynos-experimental-api \
-	--enable-omap-experimental-api \
-	--enable-tegra-experimental-api \
+    --enable-exynos-experimental-api \
+    --enable-omap-experimental-api \
+    --enable-tegra-experimental-api \
 %endif
-	--enable-install-test-programs \
-	--enable-udev
-make %{?_smp_mflags}
+    --enable-install-test-programs \
+    --enable-udev
+%{?_cov_wrap} make %{?_smp_mflags}
 pushd tests
-make %{?smp_mflags} `make check-programs`
+%{?_cov_wrap} make %{?smp_mflags} `make check-programs`
 popd
 
 %install
@@ -127,6 +122,8 @@ for i in r300_reg.h via_3d_reg.h
 do
 rm -f $RPM_BUILD_ROOT/usr/include/libdrm/$i
 done
+
+%{?_cov_install}
 
 %post -p /sbin/ldconfig
 %postun -p /sbin/ldconfig
@@ -255,7 +252,12 @@ done
 %{_mandir}/man3/drm*.3*
 %{_mandir}/man7/drm*.7*
 
+%{?_cov_results_package}
+
 %changelog
+* Fri Feb 11 2022 Ross Lagerwall <ross.lagerwall@citrix.com> - 2.4.83-4
+- CP-38416: Enable static analysis
+
 * Fri Jan 12 2018 Dave Airlie <airlied@redhat.com> - 2.4.83-2
 - Add some Coffeelake PCI IDs
 
@@ -370,7 +372,7 @@ done
 
 * Thu Jan 17 2013 Adam Jackson <ajax@redhat.com> 2.4.41-1
 - libdrm 2.4.41 plus git.  Done as a git snapshot instead of the released
-  2.4.41 since the release tarball is missing man/ entirely. 
+  2.4.41 since the release tarball is missing man/ entirely.
 - Pre-F16 changelog trim
 
 * Wed Jan 09 2013 Ben Skeggs <bskeggs@redhat.com> 2.4.40-2
