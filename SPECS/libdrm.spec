@@ -9,7 +9,7 @@
 Summary: Direct Rendering Manager runtime library
 Name: libdrm
 Version: 2.4.83
-Release: %{?xsrel}%{?dist}
+Release: %{?xsrel}.1%{?dist}
 License: MIT
 Group: System Environment/Libraries
 URL: http://dri.sourceforge.net
@@ -255,6 +255,9 @@ done
 %{?_cov_results_package}
 
 %changelog
+* Tue Sep 13 2022 Samuel Verschelde <stormi-xcp@ylix.fr> -2.4.83-4.1
+- Rebuild after first kernel build
+
 * Fri Feb 11 2022 Ross Lagerwall <ross.lagerwall@citrix.com> - 2.4.83-4
 - CP-38416: Enable static analysis
 
