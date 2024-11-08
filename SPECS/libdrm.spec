@@ -9,7 +9,7 @@
 Summary: Direct Rendering Manager runtime library
 Name: libdrm
 Version: 2.4.83
-Release: %{?xsrel}.1%{?dist}
+Release: %{?xsrel}.1.1%{?dist}
 License: MIT
 Group: System Environment/Libraries
 URL: http://dri.sourceforge.net
@@ -92,6 +92,7 @@ Utility programs for the kernel DRM interface.  Will void your warranty.
 %build
 autoreconf -v --install || exit 1
 %configure \
+    LDFLAGS=-Wl,--allow-multiple-definition \
 %ifarch %{arm}
     --enable-exynos-experimental-api \
     --enable-omap-experimental-api \
@@ -255,6 +256,9 @@ done
 %{?_cov_results_package}
 
 %changelog
+* Fri Nov 08 2024 Yann Dirson <yann.dirson@vates.tech> -2.4.83-4.1.1
+- HACK LDFLAGS=--allow-multiple-definition
+
 * Tue Sep 13 2022 Samuel Verschelde <stormi-xcp@ylix.fr> -2.4.83-4.1
 - Rebuild after first kernel build
 
